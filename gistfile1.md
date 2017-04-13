@@ -12,6 +12,8 @@ Please take security into account.
 Write a tool in python, ruby or go that checks that for each Docker container running on a machine, it is running the last version of its tag. 
 
 Example output : 
+```
 CONTAINER ID    TAG     UP TO DATE?
 cedab5d579e2    1.7     TRUE
 db620dfb3d80    latest  FALSE
+```
