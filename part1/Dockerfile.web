@@ -1,0 +1,8 @@
+FROM python:2.7.13-alpine
+MAINTAINER titan lien <titan.lien@gmail.com>
+
+RUN pip install --no-cache-dir flask
+COPY hello.py hello.py
+
+EXPOSE 80
+CMD ["python", "hello.py"]

@@ -1,0 +1,30 @@
+version: "2"
+
+networks:
+  loadbalance:
+    driver: bridge
+
+services:
+  web:
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+    networks: 
+      - loadbalance
+    container_name: web
+    command: ["python", "hello.py"]
+  
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx
+    restart: always
+    ports:
+      - "443:443/tcp"
+      - "80:80/tcp"
+    networks: 
+      - loadbalance
+    container_name: nginx
+    depends_on:
+      - web
