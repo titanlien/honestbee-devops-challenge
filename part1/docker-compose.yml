@@ -1,21 +1,31 @@
 version: "2"
 
 services:
-  nginx-proxy:
+  nginx:
     restart: always
-    image: jwilder/nginx-proxy:alpine
-    container_name: nginx-proxy
+    image: nginx:1.11.13-alpine
+    container_name: nginx
     ports:
       - "80:80/tcp"
       - "443:443/tcp"
-    volumes:
-      - /var/run/docker.sock:/tmp/docker.sock:ro
     depends_on:
       - whoami
-
+    volumes:
+      - /tmp/nginx:/etc/nginx/conf.d
+  
+  dockergen:
+    image: jwilder/docker-gen
+    command: -notify-sighup nginx -watch /etc/docker-gen/templates/nginx.tmpl /etc/nginx/conf.d/default.conf
+    volumes_from:
+      - nginx
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./nginx.tmpl:/etc/docker-gen/templates/nginx.tmpl
+  
   whoami:
     restart: always
     image: jwilder/whoami
     container_name: whoami
     environment:
+      - VIRTUAL_PROTO=https
       - VIRTUAL_HOST=whoami.local
