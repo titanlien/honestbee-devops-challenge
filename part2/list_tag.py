@@ -1,4 +1,4 @@
-#!/urs/bin/env python
+#!/usr/bin/env python
 
 import docker
 
@@ -11,10 +11,12 @@ for cont in containers:
     _id  = cont.attrs['Id'][:12]
     try:
       name, tag = cont.attrs['Config']['Image'].split(':')
-      ## if we could not get tag, just assume it's latest
+      image_id = cont.attrs['Image']
+      pull_image_id = client.images.pull(name + ':latest').id
+    ## if we could not get tag, just assume it's latest
     except ValueError:
       tag = "latest"
-    if tag == 'latest':
+    if image_id == pull_image_id:
         ret = "FALSE"
     else:
         ret ="TRUE"
