@@ -6,7 +6,7 @@ import sys, requests, json
 def pretty_print(d):
     print(json.dumps(d, indent=2))
 
-def download_manifest_for_repo(repo, tag):
+def download_header_for_repo(repo, tag):
     """
     repo: string, repository (e.g. 'library/fedora')
     tag:  string, tag of the repository (e.g. 'latest')
@@ -27,9 +27,9 @@ def download_manifest_for_repo(repo, tag):
         pretty_print(dict(response.headers))
     #pretty_print(dict(response.headers))
     #pretty_print(dict(manifest))
-    return manifest
+    return dict(response.headers)
 
-def get_manifest(repos):
+def get_header(repos):
     if not repos:
         print("Usage: {} <[namespace/]repository[:tag]> [<[namespace/]repository[:tag]>...]".format(sys.argv[0]) +
               "\nExample: {} fedora:23".format(sys.argv[0]))
@@ -41,7 +41,7 @@ def get_manifest(repos):
             repo, tag = repo_tag, "latest"
         if "/" not in repo:
             repo = "library/" + "busybox"
-        return download_manifest_for_repo(repo, tag)
+        return download_header_for_repo(repo, tag)
 
 def main():
   client = docker.from_env()
@@ -59,8 +59,8 @@ def main():
       name = cont.attrs['Config']['Image']
     finally:
       image_id = cont.attrs['Image']
-      manifest = get_manifest(name)
-      pretty_print(manifest)
+      header = get_header(name)
+      pretty_print(header["Docker-Content-Digest"])
 
       #if image_id == header_id:
       #    ret = "FALSE"
